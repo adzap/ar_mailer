@@ -96,6 +96,16 @@ class ActionMailer::ARSendmail
 
   attr_accessor :failed_auth_count
 
+  @@pid_file = nil
+
+  def self.remove_pid_file
+    if @@pid_file
+      require 'shell'
+      sh = Shell.new
+      sh.rm @@pid_file
+    end
+  end
+
   ##
   # Creates a new migration using +table_name+ and prints it on stdout.
 
@@ -190,6 +200,7 @@ end
     options[:Once] = false
     options[:RailsEnv] = ENV['RAILS_ENV']
     options[:TableName] = 'Email'
+    options[:Pidfile] = options[:Chdir] + '/log/ar_sendmail.pid'
 
     opts = OptionParser.new do |opts|
       opts.banner = "Usage: #{name} [options]"
@@ -234,6 +245,12 @@ end
               "Run as a daemon process",
               "Default: #{options[:Daemon]}") do |daemon|
         options[:Daemon] = true
+      end
+
+      opts.on("-p", "--pidfile PIDFILE",
+              "Set the pidfile location",
+              "Default: #{options[:Chdir]}#{options[:Pidfile]}", String) do |pidfile|
+        options[:Pidfile] = pidfile
       end
 
       opts.on(      "--mailq",
@@ -334,7 +351,22 @@ end
 
     if options[:Daemon] then
       require 'webrick/server'
+      @@pid_file = options[:Pidfile]
+      if File.exists? @@pid_file
+        # check to see if process is actually running
+        pid = ''
+        File.open(@@pid_file, 'r') {|f| pid = f.read.chomp }
+        if system("ps -p #{pid} | grep #{pid}") # returns true if process is running, o.w. false
+          $stderr.puts "Warning: The pid file #{@@pid_file} exists and ar_sendmail is running. Shutting down."
+          exit
+        else
+          # not running, so remove existing pid file and continue
+          self.remove_pid_file
+          log "ar_sendmail is not running. Removing existing pid file and starting up..."
+        end
+      end
       WEBrick::Daemon.start
+      File.open(@@pid_file, 'w') {|f| f.write("#{Process.pid}\n")}
     end
 
     new(options).run
@@ -454,6 +486,7 @@ end
 
   def do_exit
     log "caught signal, shutting down"
+    self.class.remove_pid_file
     exit
   end
 

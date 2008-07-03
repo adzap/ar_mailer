@@ -1,3 +1,8 @@
+= 1.4.0
+
+* New Features
+  * Added pid file creation on daemonize with command line option to specify pid filename [Dylan Egan]
+
 = 1.3.1
 
 * Fix bug #12530, gmail causes SSL errors.  Submitted by Kyle Maxwell

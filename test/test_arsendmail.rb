@@ -175,7 +175,21 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
 
     assert_equal true, options[:Daemon]
   end
+  
+  def test_class_parse_args_pidfile
+    argv = %w[-p ./log/ar_sendmail.pid]
+    
+    options = ActionMailer::ARSendmail.process_args argv
 
+    assert_equal './log/ar_sendmail.pid', options[:Pidfile]
+
+    argv = %w[--pidfile ./log/ar_sendmail.pid]
+    
+    options = ActionMailer::ARSendmail.process_args argv
+
+    assert_equal './log/ar_sendmail.pid', options[:Pidfile]
+  end
+  
   def test_class_parse_args_delay
     argv = %w[--delay 75]
     
