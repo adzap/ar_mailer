@@ -54,7 +54,7 @@ class ActionMailer::ARSendmail
   ##
   # The version of ActionMailer::ARSendmail you are running.
 
-  VERSION = '1.3.1'
+  VERSION = '1.4.1'
 
   ##
   # Maximum number of times authentication will be consecutively retried
@@ -351,7 +351,7 @@ end
 
     if options[:Daemon] then
       require 'webrick/server'
-      @@pid_file = options[:Pidfile]
+      @@pid_file = File.expand_path(options[:Pidfile])
       if File.exists? @@pid_file
         # check to see if process is actually running
         pid = ''

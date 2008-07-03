@@ -1,5 +1,11 @@
+= 1.4.1
+
+* Bugs fixed
+  * Daemon failed on startup fixed with expanding full path of pid file
+
 = 1.4.0
 
+* Forked gem and published on GitHub (gem sources -a http://gems.github.com)
 * New Features
   * Added pid file creation on daemonize with command line option to specify pid filename [Dylan Egan]
 
