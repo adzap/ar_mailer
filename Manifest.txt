@@ -7,7 +7,9 @@ bin/ar_sendmail
 lib/action_mailer/ar_mailer.rb
 lib/action_mailer/ar_sendmail.rb
 lib/smtp_tls.rb
-share/ar_sendmail
+share/bsd/ar_sendmail
+share/linux/ar_sendmail
+share/linux/ar_sendmail.conf
 test/action_mailer.rb
 test/test_armailer.rb
 test/test_arsendmail.rb
