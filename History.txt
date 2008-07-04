@@ -1,3 +1,15 @@
+= 1.4.2
+
+* New Features
+  * Added Ruby based linux init.d script for handling daemon startup using yaml
+    config file. See files share/linux/ar_sendmail and ar_sendmail.conf
+* Bugs fixed
+  * Proper handling for relative and absolute paths for the pid file
+* Removed hoe dependency since we need the explicit gemspec file for github and 
+  not deploying to RubyForge its not as useful.
+* Moved old BSD rc.d script to share/bsd folder 
+* Updated README with github gem install, docs and init script info
+ 
 = 1.4.1
 
 * Bugs fixed
