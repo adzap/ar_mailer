@@ -351,7 +351,7 @@ end
 
     if options[:Daemon] then
       require 'webrick/server'
-      @@pid_file = File.expand_path(options[:Pidfile])
+      @@pid_file = File.expand_path(options[:Pidfile], options[:Chdir])
       if File.exists? @@pid_file
         # check to see if process is actually running
         pid = ''
