@@ -13,9 +13,8 @@ config_file = '/etc/ar_sendmail.conf'
 begin
   config = YAML::load(IO.read(config_file)) 
 rescue Errno::ENOENT
-  puts "Config file not found!"
+  puts "Config file not found at '#{config_file}'!"
   exit
-rescue
 end
 
 default_options = {'pidfile' => './log/ar_sendmail.pid'}.merge(config.delete('defaults') || {})
