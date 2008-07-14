@@ -1,3 +1,9 @@
+= 1.4.3
+
+* Bugs fixed
+  * Replaced mistaken call to log when removing pid file artifact for 
+    non-running daemon
+
 = 1.4.2
 
 * New Features

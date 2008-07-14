@@ -54,7 +54,7 @@ class ActionMailer::ARSendmail
   ##
   # The version of ActionMailer::ARSendmail you are running.
 
-  VERSION = '1.4.2'
+  VERSION = '1.4.3'
 
   ##
   # Maximum number of times authentication will be consecutively retried
@@ -362,7 +362,7 @@ end
         else
           # not running, so remove existing pid file and continue
           self.remove_pid_file
-          log "ar_sendmail is not running. Removing existing pid file and starting up..."
+          $stderr.puts "ar_sendmail is not running. Removing existing pid file and starting up..."
         end
       end
       WEBrick::Daemon.start
