@@ -11,7 +11,11 @@ require 'yaml'
 config_file = '/etc/ar_sendmail.conf'
 
 begin
-  config = YAML::load(IO.read(config_file)) 
+  config = YAML::load(IO.read(config_file)) || {}
+  if config.empty? || (config.has_key?('defaults') && config.size == 1)
+    puts "No mailers defined. Exiting."
+    exit
+  end
 rescue Errno::ENOENT
   puts "Config file not found at '#{config_file}'!"
   exit
@@ -30,8 +34,7 @@ def start(app, options)
 end
 
 def stop(app, options)
-  path = options['chdir']
-  pid_file = File.expand_path(options['pidfile'], path)
+  pid_file = File.expand_path(options['pidfile'], options['chdir'])
   if File.exist? pid_file
     begin
       pid = open(pid_file).read.to_i
