@@ -54,7 +54,7 @@ class ActionMailer::ARSendmail
   ##
   # The version of ActionMailer::ARSendmail you are running.
 
-  VERSION = '1.4.3'
+  VERSION = '1.4.4'
 
   ##
   # Maximum number of times authentication will be consecutively retried
@@ -80,7 +80,7 @@ class ActionMailer::ARSendmail
   # Be verbose
 
   attr_accessor :verbose
-
+ 
   ##
   # ActiveRecord class that holds emails
 
@@ -315,7 +315,7 @@ end
     opts.parse! args
 
     return options if options.include? :Migrate or options.include? :Model
-
+ 
     ENV['RAILS_ENV'] = options[:RailsEnv]
 
     Dir.chdir options[:Chdir] do
