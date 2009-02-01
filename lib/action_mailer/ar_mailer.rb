@@ -5,6 +5,14 @@ require 'action_mailer'
 # ActionMailer.
 #
 
+class ActionMailer::ARMailer < ActionMailer::Base
+
+  def self.inherited(sub)
+    logger.warn('The ActionMailer::ARMailer class has been deprecated. Will be removed in version 2.1. Just use ActionMailer::Base.')
+  end
+
+end
+
 class ActionMailer::Base
 
   @@email_class = Email
