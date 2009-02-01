@@ -3,6 +3,7 @@ require 'action_mailer'
 require 'action_mailer/ar_sendmail'
 require 'rubygems'
 require 'test/zentest_assertions'
+require 'mocha'
 
 class ActionMailer::ARSendmail
   attr_accessor :slept
@@ -397,6 +398,12 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
 
     assert_equal '', out
     assert_equal "sent email 00000000001 from from to to: \"queued\"\n", err
+  end
+
+  def test_deliver_not_called_when_no_emails
+    sm = ActionMailer::ARSendmail.new({:Once => true})
+    sm.expects(:deliver).never
+    sm.run
   end
 
   def test_deliver_auth_error

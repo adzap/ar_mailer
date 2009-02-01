@@ -530,7 +530,8 @@ end
       now = Time.now
       begin
         cleanup
-        deliver find_emails
+        emails = find_emails
+        deliver(emails) unless emails.empty?
       rescue ActiveRecord::Transactions::TransactionError
       end
       break if @once
