@@ -76,8 +76,8 @@ end
                  :mail => 'body1'
     last = Email.create :from => nobody, :to => 'recip@h2.example.com',
                         :mail => 'body2'
-
-    last.last_send_attempt = Time.parse('Thu Aug 10 2006 11:40:05').to_i
+    last_attempt_time = Time.parse('Thu Aug 10 2006 11:40:05')
+    last.last_send_attempt = last_attempt_time.to_i
 
     out, err = util_capture do
       ActionMailer::ARSendmail.mailq 'Email'
@@ -98,7 +98,7 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
 -- 0 Kbytes in 3 Requests.
     EOF
 
-    expected = expected % Time.new.strftime('%z')
+    expected = expected % last_attempt_time.strftime('%z')
     assert_equal expected, out
   end
 
