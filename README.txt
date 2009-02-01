@@ -36,14 +36,77 @@ Then
 
   $ sudo gem install adzap-ar_mailer
 
-See ActionMailer::ARMailer for instructions on converting to ARMailer.
+
+== Usage
+
+Go to your Rails project:
+
+  $ cd your_rails_project
+
+Create a new migration:
+
+  $ ar_sendmail --create-migration
+
+You'll need to redirect this into a file.  If you want a different name
+provide the --table-name option.
+
+Create a new model:
+
+  $ ar_sendmail --create-model
+
+You'll need to redirect this into a file.  If you want a different name
+provide the --table-name option.
+
+You'll need to be sure to set the From address for your emails.  Something
+like:
+
+  def list_send(recipient)
+    from 'no_reply@example.com'
+    # ...
+
+Create an initializer or add this line to an existing one:
+
+ require 'action_mailer/ar_mailer'
+
+Edit config/environments/production.rb and set the delivery method:
+
+  $ grep delivery_method config/environments/production.rb
+  ActionMailer::Base.delivery_method = :activerecord
+
+If you need to, you can set each mailer class delivery method individually:
+
+  class MyMailer < ActionMailer::Base
+    self.delivery_method = :activerecord
+  end
+
+This can be useful when using plugins like ExceptionNotification. Where it
+might be foolish to tie the sending of the email alert to the database when the 
+database might be causing the exception being raised. In this instance you could
+override ExceptionNofitier delivery method to be smtp or set each the other 
+mailer classes to use ARMailer.
+
+Run ar_sendmail:
+
+  $ ar_sendmail
+
+You can also run it from cron with -o, or as a daemon with -d.
+
+See <tt>ar_sendmail -h</tt> for full details.
+
+=== Alternate Mail Storage
+
+If you want to set the ActiveRecord model that emails will be stored in,
+see ActionMailer::Base.email_class=
+
+
+=== Help
 
 See ar_sendmail -h for options to ar_sendmail.
 
 NOTE: You may need to delete an smtp_tls.rb file if you have one lying
 around.  ar_mailer supplies it own.
 
-=== init.d/rc.d scripts
+== Run as a service (init.d/rc.d scripts)
 
 For Linux both script and demo config files are in share/linux. 
 See ar_sendmail.conf for setting up your config. Copy the ar_sendmail file 
