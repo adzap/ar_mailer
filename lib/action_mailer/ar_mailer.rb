@@ -65,7 +65,7 @@ require 'action_mailer'
 # If you want to set the ActiveRecord model that emails will be stored in,
 # see ActionMailer::ARMailer::email_class=
 
-class ActionMailer::ARMailer < ActionMailer::Base
+class ActionMailer::Base
 
   @@email_class = Email
 

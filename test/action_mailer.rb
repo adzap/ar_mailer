@@ -68,6 +68,10 @@ class ActionMailer::Base
 
   @server_settings = {}
 
+  class << self
+    attr_accessor :delivery_method
+  end
+
   def self.logger
     o = Object.new
     def o.info(arg) end
