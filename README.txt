@@ -16,7 +16,7 @@ http://github.com/adzap/ar_mailer/wikis
 
 Bugs:
 
-http://rubyforge.org/tracker/?func=add&group_id=1513&atid=5921
+http://adzap.lighthouseapp.com/projects/26997-ar_mailer
 
 == About
 
@@ -26,9 +26,13 @@ database for later delivery by a separate process, ar_sendmail.
 
 == Installing ar_mailer (forked)
 
+Before installing you will need to make sure the original gem is uninstalled as they can't coexist:
+
+  $ sudo gem uninstall ar_mailer
+
 Install the gem from GitHub gems server:
 
-First, if you haven't already
+First, if you haven't already:
 
   $ sudo gem sources -a http://gems.github.com
 
@@ -36,6 +40,13 @@ Then
 
   $ sudo gem install adzap-ar_mailer
 
+For Rails >= 2.1, in your environment.rb:
+  
+  config.gem "adzap-ar_mailer", :lib => 'action_mailer/ar_mailer', :source => 'http://gems.github.com'
+
+For Rails 2.0, in an initializer file:
+
+  require 'action_mailer/ar_mailer'
 
 == Usage
 
@@ -64,16 +75,11 @@ like:
     from 'no_reply@example.com'
     # ...
 
-Create an initializer or add this line to an existing one:
-
- require 'action_mailer/ar_mailer'
-
 Edit config/environments/production.rb and set the delivery method:
 
-  $ grep delivery_method config/environments/production.rb
-  ActionMailer::Base.delivery_method = :activerecord
+  config.action_mailer.delivery_method = :activerecord
 
-If you need to, you can set each mailer class delivery method individually:
+Or if you need to, you can set each mailer class delivery method individually:
 
   class MyMailer < ActionMailer::Base
     self.delivery_method = :activerecord
@@ -82,10 +88,10 @@ If you need to, you can set each mailer class delivery method individually:
 This can be useful when using plugins like ExceptionNotification. Where it
 might be foolish to tie the sending of the email alert to the database when the 
 database might be causing the exception being raised. In this instance you could
-override ExceptionNofitier delivery method to be smtp or set each the other 
-mailer classes to use ARMailer.
+override ExceptionNofitier delivery method to be smtp or set the other 
+mailer classes to use ARMailer explicitly.
 
-Run ar_sendmail:
+Then to run it:
 
   $ ar_sendmail
 
