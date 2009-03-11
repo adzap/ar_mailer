@@ -1,3 +1,7 @@
+= 2.0.0
+
+* Removed need to use ARMailer subclass. Just set the delivery method and you are ready to go.
+
 = 1.4.4
 
 * Exit init.d script with message if no mailers defined.

@@ -5,7 +5,8 @@ require 'action_mailer/ar_mailer'
 ##
 # Pretend mailer
 
-class Mailer < ActionMailer::ARMailer
+class Mailer < ActionMailer::Base
+  self.delivery_method = :activerecord
 
   def mail
     @mail = Object.new

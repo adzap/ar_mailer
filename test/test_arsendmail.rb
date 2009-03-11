@@ -23,6 +23,8 @@ class TestARSendmail < Test::Unit::TestCase
     @sm = ActionMailer::ARSendmail.new
     @sm.verbose = true
 
+    Net::SMTP.clear_on_start
+
     @include_c_e = ! $".grep(/config\/environment.rb/).empty?
     $" << 'config/environment.rb' unless @include_c_e
   end
@@ -37,7 +39,7 @@ class TestARSendmail < Test::Unit::TestCase
     end
 
     expected = <<-EOF
-class AddMail < ActiveRecord::Migration
+class CreateMail < ActiveRecord::Migration
   def self.up
     create_table :mail do |t|
       t.column :from, :string
