@@ -1,5 +1,5 @@
 require 'net/smtp'
-require 'smtp_tls'
+require 'smtp_tls' if RUBY_VERSION < '1.8.7'
 require 'time'
 
 class Net::SMTP
@@ -22,17 +22,20 @@ class Net::SMTP
 
   end
 
-  def self.start(*args)
-    @start_block.call if @start_block
-    yield new(nil)
-  end
-
   def self.on_send_message(&block)
     @send_message_block = block
   end
 
   def self.on_start(&block)
-    @start_block = block
+    if block_given?
+      @start_block = block
+    else
+      @start_block
+    end
+  end
+
+  def self.clear_on_start
+    @start_block = nil
   end
 
   def self.reset
@@ -40,6 +43,11 @@ class Net::SMTP
     on_start
     on_send_message
     @reset_called = 0
+  end
+
+  def start(*args)
+    self.class.on_start.call if self.class.on_start
+    yield self
   end
 
   alias test_old_reset reset if instance_methods.include? 'reset'

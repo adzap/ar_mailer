@@ -22,6 +22,8 @@ class TestARSendmail < Test::Unit::TestCase
     @sm = ActionMailer::ARSendmail.new
     @sm.verbose = true
 
+    Net::SMTP.clear_on_start
+
     @include_c_e = ! $".grep(/config\/environment.rb/).empty?
     $" << 'config/environment.rb' unless @include_c_e
   end
