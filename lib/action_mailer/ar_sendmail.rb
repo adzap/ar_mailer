@@ -442,9 +442,14 @@ end
       smtp_settings[:password],
       smtp_settings[:authentication]
     ]
-    settings << smtp_settings[:tls] if RUBY_VERSION < '1.8.7'
     
     smtp = Net::SMTP.new(smtp_settings[:address], smtp_settings[:port])
+    if smtp.respond_to?(:enable_starttls_auto)
+      smtp.enable_starttls_auto
+    else
+      settings << smtp_settings[:tls]
+    end
+
     smtp.start(*settings) do |session|
       @failed_auth_count = 0
       until emails.empty? do
