@@ -112,7 +112,7 @@ class ActionMailer::ARSendmail
   def self.create_migration(table_name)
     require 'active_support'
     puts <<-EOF
-class Add#{table_name.classify} < ActiveRecord::Migration
+class Create#{table_name.classify} < ActiveRecord::Migration
   def self.up
     create_table :#{table_name.tableize} do |t|
       t.column :from, :string

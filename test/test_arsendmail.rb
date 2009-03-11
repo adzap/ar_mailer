@@ -38,7 +38,7 @@ class TestARSendmail < Test::Unit::TestCase
     end
 
     expected = <<-EOF
-class AddMail < ActiveRecord::Migration
+class CreateMail < ActiveRecord::Migration
   def self.up
     create_table :mail do |t|
       t.column :from, :string
