@@ -309,6 +309,10 @@ end
         usage opts
       end
 
+      opts.on("--version", "Version of ARMailer") do
+        usage "ar_mailer #{VERSION} (adzap fork)"
+      end
+
       opts.separator ''
     end
 
