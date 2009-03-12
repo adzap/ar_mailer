@@ -1,6 +1,11 @@
 = 2.0.0
 
-* Removed need to use ARMailer subclass. Just set the delivery method and you are ready to go.
+* Removed need to use ARMailer subclass. Just set the delivery method and you are ready to go. Backwards compatible with a deprecation notice if you subclass old ARMailer class.
+* Only include SMTP TLS patch if Ruby version < 1.8.7 as it has an alternative. Changes based on Calvin Yu's [cyu] fork.
+* Renamed default migration name to the modern Rails default
+* Only authenticate if emails waiting to be sent
+* Added --version switch to ar_sendmail binary
+* Created a lighthouse account for this project (adzap fork only). See README.
 
 = 1.4.4
 
