@@ -1,5 +1,5 @@
 require 'net/smtp'
-require 'smtp_tls' if RUBY_VERSION < '1.8.7'
+require 'smtp_tls' unless Net::SMTP.instance_methods.include?("enable_starttls_auto")
 require 'time'
 
 class Net::SMTP
