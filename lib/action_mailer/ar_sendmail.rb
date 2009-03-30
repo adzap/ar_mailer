@@ -3,14 +3,6 @@ require 'net/smtp'
 require 'smtp_tls' unless Net::SMTP.instance_methods.include?("enable_starttls_auto")
 require 'rubygems'
 
-class Object # :nodoc:
-  unless respond_to? :path2class then
-    def self.path2class(path)
-      path.split(/::/).inject self do |k,n| k.const_get n end
-    end
-  end
-end
-
 ##
 # Hack in RSET
 
@@ -415,7 +407,7 @@ end
 
     @batch_size = options[:BatchSize]
     @delay = options[:Delay]
-    @email_class = Object.path2class options[:TableName]
+    @email_class = options[:TableName].constantize
     @once = options[:Once]
     @verbose = options[:Verbose]
     @max_age = options[:MaxAge]

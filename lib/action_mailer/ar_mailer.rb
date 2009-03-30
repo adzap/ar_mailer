@@ -15,21 +15,10 @@ end
 
 class ActionMailer::Base
 
-  @@email_class = Email
-
   ##
-  # Current email class for deliveries.
-
-  def self.email_class
-    @@email_class
-  end
-
-  ##
-  # Sets the email class for deliveries.
-
-  def self.email_class=(klass)
-    @@email_class = klass
-  end
+  # Set the email class for deliveries.
+  #
+  cattr_accessor :email_class
 
   ##
   # Adds +mail+ to the Email table.  Only the first From address for +mail+ is
@@ -37,8 +26,7 @@ class ActionMailer::Base
 
   def perform_delivery_activerecord(mail)
     mail.destinations.each do |destination|
-      @@email_class.create :mail => mail.encoded, :to => destination,
-                           :from => mail.from.first
+      self.class.email_class.create :mail => mail.encoded, :to => destination, :from => mail.from.first
     end
   end
 

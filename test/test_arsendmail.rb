@@ -663,4 +663,3 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
   end
 
 end
-
