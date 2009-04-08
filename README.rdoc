@@ -104,6 +104,16 @@ See <tt>ar_sendmail -h</tt> for full details.
 If you want to set the ActiveRecord model that emails will be stored in,
 see ActionMailer::Base.email_class=
 
+=== A word on TLS
+
+If you are using Ruby 1.8.7 or above TLS will be enabled automatically if your
+SMTP server supports it. If you do not want it to automatically enabled then
+set the :tls option to false in your smtp_settings.
+
+If you on Ruby 1.8.6 or less then the TLS patch included in this plugin will
+be loaded, so you don't need another TLS plugin to add the capability. This 
+patch allows you to explicit set if the server supports TLS by setting the
+:tls option to true in your smtp_settings.
 
 === Help
 

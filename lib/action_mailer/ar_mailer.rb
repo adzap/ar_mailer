@@ -31,4 +31,3 @@ class ActionMailer::Base
   end
 
 end
-
