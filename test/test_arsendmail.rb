@@ -2,7 +2,7 @@ require 'test/unit'
 require 'action_mailer'
 require 'action_mailer/ar_sendmail'
 require 'rubygems'
-require 'test/zentest_assertions'
+require 'minitest/autorun'
 require 'mocha'
 
 class ActionMailer::ARSendmail
@@ -13,7 +13,7 @@ class ActionMailer::ARSendmail
   end
 end
 
-class TestARSendmail < Test::Unit::TestCase
+class TestARSendmail < MiniTest::Unit::TestCase
 
   def setup
     ActionMailer::Base.reset
@@ -34,7 +34,7 @@ class TestARSendmail < Test::Unit::TestCase
   end
 
   def test_class_create_migration
-    out, = util_capture do
+    out, = capture_io do
       ActionMailer::ARSendmail.create_migration 'Mail'
     end
 
@@ -60,7 +60,7 @@ end
   end
 
   def test_class_create_model
-    out, = util_capture do
+    out, = capture_io do
       ActionMailer::ARSendmail.create_model 'Mail'
     end
 
@@ -82,7 +82,7 @@ end
     last_attempt_time = Time.parse('Thu Aug 10 2006 11:40:05')
     last.last_send_attempt = last_attempt_time.to_i
 
-    out, err = util_capture do
+    out, err = capture_io do
       ActionMailer::ARSendmail.mailq 'Email'
     end
 
@@ -106,7 +106,7 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
   end
 
   def test_class_mailq_empty
-    out, err = util_capture do
+    out, err = capture_io do
       ActionMailer::ARSendmail.mailq 'Email'
     end
 
@@ -158,7 +158,7 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
 
     argv = %w[-c /nonexistent]
     
-    out, err = util_capture do
+    out, err = capture_io do
       assert_raises SystemExit do
         ActionMailer::ARSendmail.process_args argv
       end
@@ -221,7 +221,7 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
 
   def test_class_parse_args_mailq
     options = ActionMailer::ARSendmail.process_args []
-    deny_includes options, :MailQ
+    refute_includes options, :MailQ
 
     argv = %w[--mailq]
     
@@ -243,7 +243,7 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
 
   def test_class_parse_args_migration
     options = ActionMailer::ARSendmail.process_args []
-    deny_includes options, :Migration
+    refute_includes options, :Migration
 
     argv = %w[--create-migration]
     
@@ -254,7 +254,7 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
 
   def test_class_parse_args_model
     options = ActionMailer::ARSendmail.process_args []
-    deny_includes options, :Model
+    refute_includes options, :Model
 
     argv = %w[--create-model]
     
@@ -266,8 +266,8 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
   def test_class_parse_args_no_config_environment
     $".delete 'config/environment.rb'
 
-    out, err = util_capture do
-      assert_raise SystemExit do
+    out, err = capture_io do
+      assert_raises SystemExit do
         ActionMailer::ARSendmail.process_args []
       end
     end
@@ -279,7 +279,7 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
   def test_class_parse_args_no_config_environment_migrate
     $".delete 'config/environment.rb'
 
-    out, err = util_capture do
+    out, err = capture_io do
       ActionMailer::ARSendmail.process_args %w[--create-migration]
     end
 
@@ -292,7 +292,7 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
   def test_class_parse_args_no_config_environment_model
     $".delete 'config/environment.rb'
 
-    out, err = util_capture do
+    out, err = capture_io do
       ActionMailer::ARSendmail.process_args %w[--create-model]
     end
 
@@ -334,7 +334,7 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
   end
 
   def test_class_usage
-    out, err = util_capture do
+    out, err = capture_io do
       assert_raises SystemExit do
         ActionMailer::ARSendmail.usage 'opts'
       end
@@ -343,7 +343,7 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
     assert_equal '', out
     assert_equal "opts\n", err
 
-    out, err = util_capture do
+    out, err = capture_io do
       assert_raises SystemExit do
         ActionMailer::ARSendmail.usage 'opts', 'hi'
       end
@@ -360,7 +360,7 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
     e3 = Email.create :mail => 'body', :to => 'to', :from => 'from'
     e3.last_send_attempt = Time.now
 
-    out, err = util_capture do
+    out, err = capture_io do
       @sm.cleanup
     end
 
@@ -378,7 +378,7 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
 
     @sm.max_age = 0
 
-    out, err = util_capture do
+    out, err = capture_io do
       @sm.cleanup
     end
 
@@ -389,7 +389,7 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
   def test_deliver
     email = Email.create :mail => 'body', :to => 'to', :from => 'from'
 
-    out, err = util_capture do
+    out, err = capture_io do
       @sm.deliver [email]
     end
 
@@ -419,7 +419,7 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
 
     email = Email.create :mail => 'body', :to => 'to', :from => 'from'
 
-    out, err = util_capture do
+    out, err = capture_io do
       @sm.deliver [email]
     end
 
@@ -438,7 +438,7 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
     email = Email.create :mail => 'body', :to => 'to', :from => 'from'
     @sm.failed_auth_count = 1
 
-    out, err = util_capture do @sm.deliver [email] end
+    out, err = capture_io do @sm.deliver [email] end
 
     assert_equal 0, @sm.failed_auth_count
     assert_equal 1, Net::SMTP.deliveries.length
@@ -453,8 +453,8 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
 
     @sm.failed_auth_count = 1
 
-    out, err = util_capture do
-      assert_raise Net::SMTPAuthenticationError do
+    out, err = capture_io do
+      assert_raises Net::SMTPAuthenticationError do
         @sm.deliver []
       end
     end
@@ -474,7 +474,7 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
 
     email = Email.create :mail => 'body', :to => 'to', :from => 'from'
 
-    out, err = util_capture do
+    out, err = capture_io do
       @sm.deliver [email]
     end
 
@@ -498,7 +498,7 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
 
     email = Email.create :mail => 'body', :to => 'to', :from => 'from'
 
-    out, err = util_capture do
+    out, err = capture_io do
       @sm.deliver [email]
     end
 
@@ -519,7 +519,7 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
 
     email = Email.create :mail => 'body', :to => 'to', :from => 'from'
 
-    out, err = util_capture do
+    out, err = capture_io do
       @sm.deliver [email]
     end
 
@@ -543,7 +543,7 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
 
     email = Email.create :mail => 'body', :to => 'to', :from => 'from'
 
-    out, err = util_capture do
+    out, err = capture_io do
       @sm.deliver [email]
     end
 
@@ -570,7 +570,7 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
     email1 = Email.create :mail => 'body', :to => 'to', :from => 'from'
     email2 = Email.create :mail => 'body', :to => 'to', :from => 'from'
 
-    out, err = util_capture do
+    out, err = capture_io do
       @sm.deliver [email1, email2]
     end
 
@@ -594,7 +594,7 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
 
     email = Email.create :mail => 'body', :to => 'to', :from => 'from'
 
-    out, err = util_capture do
+    out, err = capture_io do
       @sm.deliver [email]
     end
 
@@ -608,8 +608,8 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
   end
 
   def test_do_exit
-    out, err = util_capture do
-      assert_raise SystemExit do
+    out, err = capture_io do
+      assert_raises SystemExit do
         @sm.do_exit
       end
     end
@@ -619,7 +619,7 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
   end
 
   def test_log
-    out, err = util_capture do
+    out, err = capture_io do
       @sm.log 'hi'
     end
 
@@ -642,7 +642,7 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
 
     found_emails = []
 
-    out, err = util_capture do
+    out, err = capture_io do
       found_emails = @sm.find_emails
     end
 
