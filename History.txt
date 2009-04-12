@@ -1,3 +1,8 @@
+= 2.0.1
+
+* Added option to use smtp setting of :tls => false to disable TLS auto start in Ruby 1.8.7+
+* Removed some cruft which can be handled by ActiveSupport
+
 = 2.0.0
 
 * Removed need to use ARMailer subclass. Just set the delivery method and you are ready to go. Backwards compatible with a deprecation notice if you subclass old ARMailer class.
