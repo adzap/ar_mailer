@@ -16,10 +16,17 @@ end
 class ActionMailer::Base
 
   ##
-  # Set the email class for deliveries.
+  # Set the email class for deliveries. Handle class reloading issues which prevents caching the email class.
   #
-  cattr_accessor :email_class
-  self.email_class = Email
+  @@email_class_name = 'Email'
+
+  def self.email_class=(klass)
+    @@email_class_name = klass.to_s
+  end
+
+  def self.email_class
+    @@email_class_name.constantize
+  end
 
   ##
   # Adds +mail+ to the Email table.  Only the first From address for +mail+ is
