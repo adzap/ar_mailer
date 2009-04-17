@@ -1,3 +1,8 @@
+= 2.0.2
+
+* Bugs fixed
+  * Email class reloading issue in development mode causing AR email class defaults to be lost when cached
+
 = 2.0.1
 
 * Added option to use smtp setting of :tls => false to disable TLS auto start in Ruby 1.8.7+
