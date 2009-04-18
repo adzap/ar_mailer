@@ -56,20 +56,17 @@ Go to your Rails project:
 
 Create a new migration:
 
-  $ ar_sendmail --create-migration
+  $ ar_sendmail --create-migration Emails
 
-You'll need to redirect this into a file.  If you want a different name
-provide the --table-name option.
-
+You'll need to redirect this into a file.
 Create a new model:
 
-  $ ar_sendmail --create-model
+  $ ar_sendmail --create-model Email
 
-You'll need to redirect this into a file.  If you want a different name
-provide the --table-name option.
+You'll need to redirect this into a file.
 
-You'll need to be sure to set the From address for your emails.  Something
-like:
+In your mailer class methods you must be sure to set the From address for your emails.
+Something like:
 
   def list_send(recipient)
     from 'no_reply@example.com'
@@ -101,8 +98,11 @@ See <tt>ar_sendmail -h</tt> for full details.
 
 === Alternate Mail Storage
 
-If you want to set the ActiveRecord model that emails will be stored in,
-see ActionMailer::Base.email_class=
+By default ar_mailer assumes you are using an ActiveRecord model called
+Email to store the emails created before sending. If you want to change
+this you alter it in an intializer like so:
+
+  ActionMailer::Base.email_class = Newsletter
 
 === A Word on TLS
 

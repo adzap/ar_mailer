@@ -83,7 +83,7 @@ end
     last.last_send_attempt = last_attempt_time.to_i
 
     out, err = capture_io do
-      ActionMailer::ARSendmail.mailq 'Email'
+      ActionMailer::ARSendmail.mailq
     end
 
     expected = <<-EOF
@@ -107,7 +107,7 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
 
   def test_class_mailq_empty
     out, err = capture_io do
-      ActionMailer::ARSendmail.mailq 'Email'
+      ActionMailer::ARSendmail.mailq
     end
 
     assert_equal "Mail queue is empty\n", out
@@ -123,14 +123,22 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
     assert_equal nil, @sm.batch_size
 
     @sm = ActionMailer::ARSendmail.new :Delay => 75, :Verbose => true,
-                                       :TableName => 'Object', :Once => true,
-                                       :BatchSize => 1000
+                                       :Once => true, :BatchSize => 1000
 
     assert_equal 75, @sm.delay
-    assert_equal Object, @sm.email_class
+    assert_equal Email, @sm.email_class
     assert_equal true, @sm.once
     assert_equal true, @sm.verbose
     assert_equal 1000, @sm.batch_size
+
+    ActionMailer::Base.email_class = Newsletter
+    @sm = ActionMailer::ARSendmail.new
+
+    assert_equal 60, @sm.delay
+    assert_equal Newsletter, @sm.email_class
+    assert_equal nil, @sm.once
+    assert_equal nil, @sm.verbose
+    assert_equal nil, @sm.batch_size
   end
 
   def test_class_parse_args_batch_size
@@ -245,22 +253,22 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
     options = ActionMailer::ARSendmail.process_args []
     refute_includes options, :Migration
 
-    argv = %w[--create-migration]
+    argv = %w[--create-migration Emails]
     
     options = ActionMailer::ARSendmail.process_args argv
 
-    assert_equal true, options[:Migrate]
+    assert_equal 'Emails', options[:Migrate]
   end
 
   def test_class_parse_args_model
     options = ActionMailer::ARSendmail.process_args []
     refute_includes options, :Model
 
-    argv = %w[--create-model]
+    argv = %w[--create-model Email]
     
     options = ActionMailer::ARSendmail.process_args argv
 
-    assert_equal true, options[:Model]
+    assert_equal 'Email', options[:Model]
   end
 
   def test_class_parse_args_no_config_environment
@@ -280,7 +288,7 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
     $".delete 'config/environment.rb'
 
     out, err = capture_io do
-      ActionMailer::ARSendmail.process_args %w[--create-migration]
+      ActionMailer::ARSendmail.process_args %w[--create-migration Emails]
     end
 
     assert true # count
@@ -293,7 +301,7 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
     $".delete 'config/environment.rb'
 
     out, err = capture_io do
-      ActionMailer::ARSendmail.process_args %w[--create-model]
+      ActionMailer::ARSendmail.process_args %w[--create-model Email]
     end
 
     assert true # count
@@ -317,20 +325,6 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
     options = ActionMailer::ARSendmail.process_args argv
 
     assert_equal true, options[:Once]
-  end
-
-  def test_class_parse_args_table_name
-    argv = %w[-t Email]
-    
-    options = ActionMailer::ARSendmail.process_args argv
-
-    assert_equal 'Email', options[:TableName]
-
-    argv = %w[--table-name=Email]
-    
-    options = ActionMailer::ARSendmail.process_args argv
-
-    assert_equal 'Email', options[:TableName]
   end
 
   def test_class_usage

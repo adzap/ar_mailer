@@ -77,6 +77,7 @@ class ActionMailer::Base
   @server_settings = {}
 
   class << self
+    cattr_accessor :email_class
     attr_accessor :delivery_method
   end
 
@@ -94,6 +95,7 @@ class ActionMailer::Base
 
   def self.reset
     server_settings.clear
+    self.email_class = Email
   end
 
   def self.server_settings
@@ -183,6 +185,8 @@ class Email
 end
 
 Mail = Email
+
+class Newsletter < Email; end
 
 class String
   def classify

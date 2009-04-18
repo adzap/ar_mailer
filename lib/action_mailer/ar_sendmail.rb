@@ -39,7 +39,6 @@ module ActionMailer; end # :nodoc:
 # * --mailq
 # * --create-migration
 # * --create-model
-# * --table-name
 
 class ActionMailer::ARSendmail
 
@@ -123,12 +122,12 @@ end
   end
 
   ##
-  # Creates a new model using +table_name+ and prints it on stdout.
+  # Creates a new model using +model_name+ and prints it on stdout.
 
-  def self.create_model(table_name)
+  def self.create_model(model_name)
     require 'active_support'
     puts <<-EOF
-class #{table_name.classify} < ActiveRecord::Base
+class #{model_name.classify} < ActiveRecord::Base
 end
     EOF
   end
@@ -140,9 +139,8 @@ end
   # known.  See http://api.rubyonrails.org/classes/ActiveRecord/Timestamp.html
   # to learn how to enable ActiveRecord::Timestamp.
 
-  def self.mailq(table_name)
-    klass = table_name.split('::').inject(Object) { |k,n| k.const_get n }
-    emails = klass.find :all
+  def self.mailq
+    emails = ActionMailer::Base.email_class.find :all
 
     if emails.empty? then
       puts "Mail queue is empty"
@@ -191,7 +189,6 @@ end
     options[:MaxAge] = 86400 * 7
     options[:Once] = false
     options[:RailsEnv] = ENV['RAILS_ENV']
-    options[:TableName] = 'Email'
     options[:Pidfile] = options[:Chdir] + '/log/ar_sendmail.pid'
 
     opts = OptionParser.new do |opts|
@@ -253,16 +250,16 @@ end
       opts.separator ''
       opts.separator 'Setup Options:'
 
-      opts.on(      "--create-migration",
+      opts.on(      "--create-migration TABLE_NAME",
               "Prints a migration to add an Email table",
-              "to stdout") do |create|
-        options[:Migrate] = true
+              "to stdout") do |name|
+        options[:Migrate] = name
       end
 
-      opts.on(      "--create-model",
+      opts.on(      "--create-model MODEL_NAME",
               "Prints a model for an Email ActiveRecord",
-              "object to stdout") do |create|
-        options[:Model] = true
+              "object to stdout") do |name|
+        options[:Model] = name
       end
 
       opts.separator ''
@@ -280,14 +277,6 @@ end
               "Set the RAILS_ENV constant",
               "Default: #{options[:RailsEnv]}") do |env|
         options[:RailsEnv] = env
-      end
-
-      opts.on("-t", "--table-name TABLE_NAME",
-              "Name of table holding emails",
-              "Used for both sendmail and",
-              "migration creation",
-              "Default: #{options[:TableName]}") do |name|
-        options[:TableName] = name
       end
 
       opts.on("-v", "--[no-]verbose",
@@ -335,13 +324,13 @@ end
     options = process_args args
 
     if options.include? :Migrate then
-      create_migration options[:TableName]
+      create_migration options[:Migrate]
       exit
     elsif options.include? :Model then
-      create_model options[:TableName]
+      create_model options[:Model]
       exit
     elsif options.include? :MailQ then
-      mailq options[:TableName]
+      mailq
       exit
     end
 
@@ -396,18 +385,16 @@ end
   # Valid options are:
   # <tt>:BatchSize</tt>:: Maximum number of emails to send per delay
   # <tt>:Delay</tt>:: Delay between deliver attempts
-  # <tt>:TableName</tt>:: Table name that stores the emails
   # <tt>:Once</tt>:: Only attempt to deliver emails once when run is called
   # <tt>:Verbose</tt>:: Be verbose.
 
   def initialize(options = {})
     options[:Delay] ||= 60
-    options[:TableName] ||= 'Email'
     options[:MaxAge] ||= 86400 * 7
 
     @batch_size = options[:BatchSize]
     @delay = options[:Delay]
-    @email_class = options[:TableName].constantize
+    @email_class = ActionMailer::Base.email_class
     @once = options[:Once]
     @verbose = options[:Verbose]
     @max_age = options[:MaxAge]
