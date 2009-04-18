@@ -59,6 +59,7 @@ Create a new migration:
   $ ar_sendmail --create-migration Emails
 
 You'll need to redirect this into a file.
+
 Create a new model:
 
   $ ar_sendmail --create-model Email
