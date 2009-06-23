@@ -33,45 +33,6 @@ class TestARSendmail < MiniTest::Unit::TestCase
     $".delete 'config/environment.rb' unless @include_c_e
   end
 
-  def test_class_create_migration
-    out, = capture_io do
-      ActionMailer::ARSendmail.create_migration 'Mail'
-    end
-
-    expected = <<-EOF
-class CreateMail < ActiveRecord::Migration
-  def self.up
-    create_table :mail do |t|
-      t.column :from, :string
-      t.column :to, :string
-      t.column :last_send_attempt, :integer, :default => 0
-      t.column :mail, :text
-      t.column :created_on, :datetime
-    end
-  end
-
-  def self.down
-    drop_table :mail
-  end
-end
-    EOF
-
-    assert_equal expected, out
-  end
-
-  def test_class_create_model
-    out, = capture_io do
-      ActionMailer::ARSendmail.create_model 'Mail'
-    end
-
-    expected = <<-EOF
-class Mail < ActiveRecord::Base
-end
-    EOF
-
-    assert_equal expected, out
-  end
-
   def test_class_mailq
     Email.create :from => nobody, :to => 'recip@h1.example.com',
                  :mail => 'body0'
@@ -249,28 +210,6 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
     assert_equal 86400, options[:MaxAge]
   end
 
-  def test_class_parse_args_migration
-    options = ActionMailer::ARSendmail.process_args []
-    refute_includes options, :Migration
-
-    argv = %w[--create-migration Emails]
-    
-    options = ActionMailer::ARSendmail.process_args argv
-
-    assert_equal 'Emails', options[:Migrate]
-  end
-
-  def test_class_parse_args_model
-    options = ActionMailer::ARSendmail.process_args []
-    refute_includes options, :Model
-
-    argv = %w[--create-model Email]
-    
-    options = ActionMailer::ARSendmail.process_args argv
-
-    assert_equal 'Email', options[:Model]
-  end
-
   def test_class_parse_args_no_config_environment
     $".delete 'config/environment.rb'
 
@@ -279,35 +218,6 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
         ActionMailer::ARSendmail.process_args []
       end
     end
-
-  ensure
-    $" << 'config/environment.rb' if @include_c_e
-  end
-
-  def test_class_parse_args_no_config_environment_migrate
-    $".delete 'config/environment.rb'
-
-    out, err = capture_io do
-      ActionMailer::ARSendmail.process_args %w[--create-migration Emails]
-    end
-
-    assert true # count
-
-  ensure
-    $" << 'config/environment.rb' if @include_c_e
-  end
-
-  def test_class_parse_args_no_config_environment_model
-    $".delete 'config/environment.rb'
-
-    out, err = capture_io do
-      ActionMailer::ARSendmail.process_args %w[--create-model Email]
-    end
-
-    assert true # count
-
-  rescue SystemExit
-    flunk 'Should not exit'
 
   ensure
     $" << 'config/environment.rb' if @include_c_e

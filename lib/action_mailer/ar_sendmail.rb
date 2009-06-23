@@ -37,8 +37,6 @@ module ActionMailer; end # :nodoc:
 # The interesting options are:
 # * --daemon
 # * --mailq
-# * --create-migration
-# * --create-model
 
 class ActionMailer::ARSendmail
 
@@ -95,41 +93,6 @@ class ActionMailer::ARSendmail
       sh = Shell.new
       sh.rm @@pid_file
     end
-  end
-
-  ##
-  # Creates a new migration using +table_name+ and prints it on stdout.
-
-  def self.create_migration(table_name)
-    require 'active_support'
-    puts <<-EOF
-class Create#{table_name.classify} < ActiveRecord::Migration
-  def self.up
-    create_table :#{table_name.tableize} do |t|
-      t.column :from, :string
-      t.column :to, :string
-      t.column :last_send_attempt, :integer, :default => 0
-      t.column :mail, :text
-      t.column :created_on, :datetime
-    end
-  end
-
-  def self.down
-    drop_table :#{table_name.tableize}
-  end
-end
-    EOF
-  end
-
-  ##
-  # Creates a new model using +model_name+ and prints it on stdout.
-
-  def self.create_model(model_name)
-    require 'active_support'
-    puts <<-EOF
-class #{model_name.classify} < ActiveRecord::Base
-end
-    EOF
   end
 
   ##
@@ -250,18 +213,6 @@ end
       opts.separator ''
       opts.separator 'Setup Options:'
 
-      opts.on(      "--create-migration TABLE_NAME",
-              "Prints a migration to add an Email table",
-              "to stdout") do |name|
-        options[:Migrate] = name
-      end
-
-      opts.on(      "--create-model MODEL_NAME",
-              "Prints a model for an Email ActiveRecord",
-              "object to stdout") do |name|
-        options[:Model] = name
-      end
-
       opts.separator ''
       opts.separator 'Generic Options:'
 
@@ -299,8 +250,6 @@ end
 
     opts.parse! args
 
-    return options if options.include? :Migrate or options.include? :Model
- 
     ENV['RAILS_ENV'] = options[:RailsEnv]
 
     Dir.chdir options[:Chdir] do
@@ -310,7 +259,7 @@ end
         usage opts, <<-EOF
 #{name} must be run from a Rails application's root to deliver email.
 #{Dir.pwd} does not appear to be a Rails application root.
-          EOF
+        EOF
       end
     end
 
@@ -323,13 +272,7 @@ end
   def self.run(args = ARGV)
     options = process_args args
 
-    if options.include? :Migrate then
-      create_migration options[:Migrate]
-      exit
-    elsif options.include? :Model then
-      create_model options[:Model]
-      exit
-    elsif options.include? :MailQ then
+    if options.include? :MailQ then
       mailq
       exit
     end

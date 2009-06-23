@@ -54,17 +54,21 @@ Go to your Rails project:
 
   $ cd your_rails_project
 
-Create a new migration:
+Create the migration and model:
 
-  $ ar_sendmail --create-migration Emails
+This shows the options which are only the model name, which defaults to Email
 
-You'll need to redirect this into a file.
+  ./script/generate ar_mailer -h
 
-Create a new model:
+Then run with defaults
 
-  $ ar_sendmail --create-model Email
+  ./script/generate ar_mailer
 
-You'll need to redirect this into a file.
+Or specify a custom model name
+
+  ./script/generate ar_mailer Newsletter
+
+See Alternate Mail Storage if you use a custom model name
 
 In your mailer class methods you must be sure to set the From address for your emails.
 Something like:
