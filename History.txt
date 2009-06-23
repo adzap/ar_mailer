@@ -1,3 +1,7 @@
+= 2.1.0
+
+* Switched to using a Rails generator for migration and model files. The ar_sendmail options have been removed.
+
 = 2.0.2
 
 * Bugs fixed
