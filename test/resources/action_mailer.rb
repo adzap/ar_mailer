@@ -18,8 +18,7 @@ class Net::SMTP
     attr_reader :send_message_block
     attr_accessor :reset_called
 
-    send :remove_method, :start
-
+    # send :remove_method, :start
   end
 
   def self.on_send_message(&block)
@@ -184,9 +183,7 @@ class Email
 
 end
 
-Mail = Email
-
-class Newsletter < Email; end
+Newsletter = Email
 
 class String
   def classify
@@ -198,4 +195,3 @@ class String
   end
 
 end
-

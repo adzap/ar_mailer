@@ -1,9 +1,4 @@
-require 'test/unit'
-require 'action_mailer'
-require 'action_mailer/ar_sendmail'
-require 'rubygems'
-require 'minitest/autorun'
-require 'mocha'
+require File.expand_path(File.dirname(__FILE__) + '/test_helper')
 
 class ActionMailer::ARSendmail
   attr_accessor :slept

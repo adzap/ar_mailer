@@ -53,6 +53,6 @@ task :default => :test
 desc 'Test the ar_mailer gem.'
 Rake::TestTask.new(:test) do |t|
   t.libs << 'lib' << 'test'
-  t.pattern = 'test/**/test_*.rb'
+  t.test_files = FileList['test/**/test_*.rb'].exclude("test/test_helper.rb")
   t.verbose = true
 end

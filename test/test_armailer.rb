@@ -1,11 +1,4 @@
-require 'test/unit'
-require 'rubygems'
-require 'active_support'
-require 'action_mailer'
-require 'action_mailer/ar_mailer'
-
-##
-# Pretend mailer
+require File.expand_path(File.dirname(__FILE__) + '/test_helper')
 
 class Mailer < ActionMailer::Base
   self.delivery_method = :activerecord
@@ -25,15 +18,15 @@ class TestARMailer < Test::Unit::TestCase
     Mailer.email_class = Email
 
     Email.records.clear
-    Mail.records.clear
+    Newsletter.records.clear
   end
 
   def test_self_email_class_equals
-    Mailer.email_class = Mail
+    Mailer.email_class = Newsletter
 
     Mailer.deliver_mail
 
-    assert_equal 2, Mail.records.length
+    assert_equal 2, Newsletter.records.length
   end
 
   def test_perform_delivery_activerecord
