@@ -2,6 +2,8 @@ require 'optparse'
 require 'net/smtp'
 require 'smtp_tls' unless Net::SMTP.instance_methods.include?("enable_starttls_auto")
 require 'rubygems'
+require 'action_mailer'
+require 'action_mailer/ar_mailer'
 
 ##
 # Hack in RSET
@@ -20,8 +22,6 @@ class SMTP # :nodoc:
 
 end
 end
-
-module ActionMailer; end # :nodoc:
 
 ##
 # ActionMailer::ARSendmail delivers email from the email table to the
@@ -43,7 +43,7 @@ class ActionMailer::ARSendmail
   ##
   # The version of ActionMailer::ARSendmail you are running.
 
-  VERSION = '2.1.1'
+  VERSION = '2.1.2'
 
   ##
   # Maximum number of times authentication will be consecutively retried
