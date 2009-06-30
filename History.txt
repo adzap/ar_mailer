@@ -1,9 +1,19 @@
+= 2.1.2
+
+* Bugs fixed
+  * Require ar_mailer in ar_sendmail since the change to remove TableName and use email_class
+
+= 2.1.1
+ 
+ * Force gem rebuild
+
 = 2.1.0
 
 * Switched to using a Rails generator for migration and model files. The ar_sendmail options have been removed.
 
 = 2.0.2
 
+* Removed TableName option from ar_sendmail options as its redundant. The Rails environment gets loaded so the settings for email class also get loaded
 * Bugs fixed
   * Email class reloading issue in development mode causing AR email class defaults to be lost when cached
 
