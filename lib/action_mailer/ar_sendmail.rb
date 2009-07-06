@@ -3,11 +3,6 @@ require 'net/smtp'
 require 'smtp_tls' unless Net::SMTP.instance_methods.include?("enable_starttls_auto")
 require 'rubygems'
 
-module ActionMailer; end
-# This should get loaded by the environment later but for some reason fails with
-# the github namespaced gem and succeeds with a local gem build install.
-require 'action_mailer/ar_mailer'
-
 ##
 # Hack in RSET
 
@@ -40,6 +35,8 @@ end
 # The interesting options are:
 # * --daemon
 # * --mailq
+
+module ActionMailer; end
 
 class ActionMailer::ARSendmail
 
@@ -254,6 +251,7 @@ class ActionMailer::ARSendmail
     Dir.chdir options[:Chdir] do
       begin
         require 'config/environment'
+        require 'action_mailer/ar_mailer'
       rescue LoadError
         usage opts, <<-EOF
 #{name} must be run from a Rails application's root to deliver email.
