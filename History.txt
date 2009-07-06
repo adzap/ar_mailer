@@ -1,3 +1,8 @@
+= 2.1.4
+
+* Bugs fixed
+  * Explicitly require ar_mailer in ar_sendmail because its not getting loaded by the Rails environment for some reason
+
 = 2.1.3
 
 * Tests now pass on gem install
