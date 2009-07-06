@@ -73,7 +73,6 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
     @sm = ActionMailer::ARSendmail.new
 
     assert_equal 60, @sm.delay
-    assert_equal Email, @sm.email_class
     assert_equal nil, @sm.once
     assert_equal nil, @sm.verbose
     assert_equal nil, @sm.batch_size
@@ -82,19 +81,9 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
                                        :Once => true, :BatchSize => 1000
 
     assert_equal 75, @sm.delay
-    assert_equal Email, @sm.email_class
     assert_equal true, @sm.once
     assert_equal true, @sm.verbose
     assert_equal 1000, @sm.batch_size
-
-    ActionMailer::Base.email_class = Newsletter
-    @sm = ActionMailer::ARSendmail.new
-
-    assert_equal 60, @sm.delay
-    assert_equal Newsletter, @sm.email_class
-    assert_equal nil, @sm.once
-    assert_equal nil, @sm.verbose
-    assert_equal nil, @sm.batch_size
   end
 
   def test_class_parse_args_batch_size

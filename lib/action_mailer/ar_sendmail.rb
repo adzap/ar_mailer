@@ -2,8 +2,6 @@ require 'optparse'
 require 'net/smtp'
 require 'smtp_tls' unless Net::SMTP.instance_methods.include?("enable_starttls_auto")
 require 'rubygems'
-require 'action_mailer'
-require 'action_mailer/ar_mailer'
 
 ##
 # Hack in RSET
@@ -38,6 +36,8 @@ end
 # * --daemon
 # * --mailq
 
+module ActionMailer; end
+
 class ActionMailer::ARSendmail
 
   ##
@@ -70,10 +70,6 @@ class ActionMailer::ARSendmail
 
   attr_accessor :verbose
  
-  ##
-  # ActiveRecord class that holds emails
-
-  attr_reader :email_class
 
   ##
   # True if only one delivery attempt will be made per call to run
@@ -337,7 +333,6 @@ class ActionMailer::ARSendmail
 
     @batch_size = options[:BatchSize]
     @delay = options[:Delay]
-    @email_class = ActionMailer::Base.email_class
     @once = options[:Once]
     @verbose = options[:Verbose]
     @max_age = options[:MaxAge]
@@ -353,7 +348,7 @@ class ActionMailer::ARSendmail
     return if @max_age == 0
     timeout = Time.now - @max_age
     conditions = ['last_send_attempt > 0 and created_on < ?', timeout]
-    mail = @email_class.destroy_all conditions
+    mail = ActionMailer::Base.email_class.destroy_all conditions
 
     log "expired #{mail.length} emails from the queue"
   end
@@ -432,7 +427,7 @@ class ActionMailer::ARSendmail
   def find_emails
     options = { :conditions => ['last_send_attempt < ?', Time.now.to_i - 300] }
     options[:limit] = batch_size unless batch_size.nil?
-    mail = @email_class.find :all, options
+    mail = ActionMailer::Base.email_class.find :all, options
 
     log "found #{mail.length} emails to send"
     mail
