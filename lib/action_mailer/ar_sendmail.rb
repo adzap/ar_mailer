@@ -1,7 +1,6 @@
 require 'optparse'
 require 'net/smtp'
 require 'smtp_tls' unless Net::SMTP.instance_methods.include?("enable_starttls_auto")
-require 'rubygems'
 
 ##
 # Hack in RSET
