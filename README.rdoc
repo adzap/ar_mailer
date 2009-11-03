@@ -30,11 +30,12 @@ Before installing you will need to make sure the original gem is uninstalled as 
 
   $ sudo gem uninstall ar_mailer
 
-Install the gem from GitHub gems server:
+Install the gem from Gemcutter gems server:
 
 First, if you haven't already:
 
-  $ sudo gem sources -a http://gems.github.com
+  $ sudo gem install gemcutter
+  $ sudo gem tumble
 
 Then
 
@@ -42,7 +43,7 @@ Then
 
 For Rails >= 2.1, in your environment.rb:
   
-  config.gem "adzap-ar_mailer", :lib => 'action_mailer/ar_mailer', :source => 'http://gems.github.com'
+  config.gem "adzap-ar_mailer", :lib => 'action_mailer/ar_mailer', :source => 'http://gemcutter.com'
 
 For Rails 2.0, in an initializer file:
 
