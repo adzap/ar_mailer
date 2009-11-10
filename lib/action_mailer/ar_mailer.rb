@@ -23,8 +23,9 @@ class ActionMailer::Base
   # used.
 
   def perform_delivery_activerecord(mail)
+    sender = (mail['return-path'] && mail['return-path'].spec) || mail['from']
     mail.destinations.each do |destination|
-      self.class.email_class.create :mail => mail.encoded, :to => destination, :from => mail.from.first
+      self.class.email_class.create :mail => mail.encoded, :to => destination, :from => sender
     end
   end
 
