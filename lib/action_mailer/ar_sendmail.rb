@@ -388,7 +388,7 @@ class ActionMailer::ARSendmail
         rescue Net::SMTPServerBusy => e
           log "server too busy, stopping delivery cycle"
           return
-        rescue Net::SMTPUnknownError, Net::SMTPSyntaxError, TimeoutError => e
+        rescue Net::SMTPUnknownError, Net::SMTPSyntaxError, TimeoutError, Timeout::Error => e
           email.last_send_attempt = Time.now.to_i
           email.save rescue nil
           log "error sending email %d: %p(%s):\n\t%s" %
