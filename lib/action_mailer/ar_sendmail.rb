@@ -456,7 +456,6 @@ class ActionMailer::ARSendmail
     install_signal_handlers
 
     loop do
-      now = Time.now
       begin
         cleanup
         emails = find_emails
@@ -464,7 +463,7 @@ class ActionMailer::ARSendmail
       rescue ActiveRecord::Transactions::TransactionError
       end
       break if @once
-      sleep @delay if now + @delay > Time.now
+      sleep @delay
     end
   end
 
