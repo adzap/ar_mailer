@@ -68,7 +68,7 @@ class ActionMailer::ARSendmail
   # Be verbose
 
   attr_accessor :verbose
- 
+
 
   ##
   # True if only one delivery attempt will be made per call to run
@@ -363,7 +363,7 @@ class ActionMailer::ARSendmail
       smtp_settings[:password],
       smtp_settings[:authentication]
     ]
-    
+
     smtp = Net::SMTP.new(smtp_settings[:address], smtp_settings[:port])
     if smtp.respond_to?(:enable_starttls_auto)
       smtp.enable_starttls_auto unless smtp_settings[:tls] == false
@@ -386,8 +386,7 @@ class ActionMailer::ARSendmail
           email.destroy
           session.reset
         rescue Net::SMTPServerBusy => e
-          log "server too busy, sleeping #{@delay} seconds"
-          sleep delay
+          log "server too busy, stopping delivery cycle"
           return
         rescue Net::SMTPUnknownError, Net::SMTPSyntaxError, TimeoutError => e
           email.last_send_attempt = Time.now.to_i

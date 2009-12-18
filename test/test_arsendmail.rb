@@ -98,19 +98,19 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
 
   def test_class_parse_args_chdir
     argv = %w[-c /tmp]
-    
+
     options = ActionMailer::ARSendmail.process_args argv
 
     assert_equal '/tmp', options[:Chdir]
 
     argv = %w[--chdir /tmp]
-    
+
     options = ActionMailer::ARSendmail.process_args argv
 
     assert_equal '/tmp', options[:Chdir]
 
     argv = %w[-c /nonexistent]
-    
+
     out, err = capture_io do
       assert_raises SystemExit do
         ActionMailer::ARSendmail.process_args argv
@@ -120,35 +120,35 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
 
   def test_class_parse_args_daemon
     argv = %w[-d]
-    
+
     options = ActionMailer::ARSendmail.process_args argv
 
     assert_equal true, options[:Daemon]
 
     argv = %w[--daemon]
-    
+
     options = ActionMailer::ARSendmail.process_args argv
 
     assert_equal true, options[:Daemon]
   end
-  
+
   def test_class_parse_args_pidfile
     argv = %w[-p ./log/ar_sendmail.pid]
-    
+
     options = ActionMailer::ARSendmail.process_args argv
 
     assert_equal './log/ar_sendmail.pid', options[:Pidfile]
 
     argv = %w[--pidfile ./log/ar_sendmail.pid]
-    
+
     options = ActionMailer::ARSendmail.process_args argv
 
     assert_equal './log/ar_sendmail.pid', options[:Pidfile]
   end
-  
+
   def test_class_parse_args_delay
     argv = %w[--delay 75]
-    
+
     options = ActionMailer::ARSendmail.process_args argv
 
     assert_equal 75, options[:Delay]
@@ -158,7 +158,7 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
     assert_equal nil, ENV['RAILS_ENV']
 
     argv = %w[-e production]
-    
+
     options = ActionMailer::ARSendmail.process_args argv
 
     assert_equal 'production', options[:RailsEnv]
@@ -166,7 +166,7 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
     assert_equal 'production', ENV['RAILS_ENV']
 
     argv = %w[--environment production]
-    
+
     options = ActionMailer::ARSendmail.process_args argv
 
     assert_equal 'production', options[:RailsEnv]
@@ -177,7 +177,7 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
     refute_includes options, :MailQ
 
     argv = %w[--mailq]
-    
+
     options = ActionMailer::ARSendmail.process_args argv
 
     assert_equal true, options[:MailQ]
@@ -209,13 +209,13 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
 
   def test_class_parse_args_once
     argv = %w[-o]
-    
+
     options = ActionMailer::ARSendmail.process_args argv
 
     assert_equal true, options[:Once]
 
     argv = %w[--once]
-    
+
     options = ActionMailer::ARSendmail.process_args argv
 
     assert_equal true, options[:Once]
@@ -418,31 +418,6 @@ Last send attempt: Thu Aug 10 11:40:05 %s 2006
 
     assert_equal '', out
     assert_equal '', err
-  end
-
-  def test_deliver_server_busy
-    Net::SMTP.on_send_message do
-      e = Net::SMTPServerBusy.new 'try again'
-      e.set_backtrace %w[one two three]
-      raise e
-    end
-
-    now = Time.now.to_i
-
-    email = Email.create :mail => 'body', :to => 'to', :from => 'from'
-
-    out, err = capture_io do
-      @sm.deliver [email]
-    end
-
-    assert_equal 0, Net::SMTP.deliveries.length
-    assert_equal 1, Email.records.length
-    assert_operator now, :>=, Email.records.first.last_send_attempt
-    assert_equal 0, Net::SMTP.reset_called, 'Reset connection on SyntaxError'
-    assert_equal [60], @sm.slept
-
-    assert_equal '', out
-    assert_equal "server too busy, sleeping 60 seconds\n", err
   end
 
   def test_deliver_syntax_error
