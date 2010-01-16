@@ -6,7 +6,7 @@ require 'rake/rdoctask'
 $:.unshift(File.expand_path(File.dirname(__FILE__) + '/lib'))
 
 require './lib/action_mailer/ar_sendmail'
- 
+
 ar_mailer_gemspec = Gem::Specification.new do |s|
   s.name = %q{adzap-ar_mailer}
   s.version = ActionMailer::ARSendmail::VERSION
@@ -17,7 +17,26 @@ ar_mailer_gemspec = Gem::Specification.new do |s|
   s.email = %q{adam.meehan@gmail.com}
   s.executables = ["ar_sendmail"]
   s.extra_rdoc_files = ["History.txt", "LICENSE.txt", "README.rdoc"]
-  s.files = ["History.txt", "LICENSE.txt", "README.rdoc", "Rakefile", "bin/ar_sendmail", "generators/ar_mailer/ar_mailer_generator.rb", "generators/ar_mailer/templates/migration.rb", "generators/ar_mailer/templates/model.rb", "lib/action_mailer/ar_mailer.rb", "lib/action_mailer/ar_sendmail.rb", "lib/smtp_tls.rb", "share/bsd/ar_sendmail", "share/linux/ar_sendmail", "share/linux/ar_sendmail.conf", "test/resources/action_mailer.rb", "test/test_armailer.rb", "test/test_arsendmail.rb", "test/test_helper.rb"]
+  s.files = [
+    "History.txt",
+    "LICENSE.txt",
+    "README.rdoc",
+    "Rakefile",
+    "bin/ar_sendmail",
+    "generators/ar_mailer/ar_mailer_generator.rb",
+    "generators/ar_mailer/templates/migration.rb",
+    "generators/ar_mailer/templates/model.rb",
+    "lib/action_mailer/ar_mailer.rb",
+    "lib/action_mailer/ar_sendmail.rb",
+    "lib/smtp_tls.rb",
+    "share/bsd/ar_sendmail",
+    "share/linux/ar_sendmail",
+    "share/linux/ar_sendmail.conf",
+    "test/resources/action_mailer.rb",
+    "test/test_armailer.rb",
+    "test/test_arsendmail.rb",
+    "test/test_helper.rb"
+  ]
   s.has_rdoc = true
   s.homepage = %q{http://github.com/adzap/ar_mailer}
   s.rdoc_options = ["--main", "README.rdoc"]
@@ -25,19 +44,19 @@ ar_mailer_gemspec = Gem::Specification.new do |s|
   s.rubyforge_project = %q{seattlerb}
   s.summary = %q{A two-phase delivery agent for ActionMailer}
   s.test_files = ["test/test_armailer.rb", "test/test_arsendmail.rb"]
-end 
+end
 
 Rake::GemPackageTask.new(ar_mailer_gemspec) do |pkg|
   pkg.gem_spec = ar_mailer_gemspec
 end
- 
+
 desc "Update ar_mailer.gemspec"
 task :make_spec do
-  File.open("ar_mailer.gemspec", "w") do |f|
+  File.open("adzap-ar_mailer.gemspec", "w") do |f|
     f.puts(ar_mailer_gemspec.to_ruby)
   end
 end
- 
+
 desc "Build packages and install"
 task :install => :package do
   sh %{sudo gem install --local --test pkg/ar_mailer-#{ActionMailer::ARSendmail::VERSION}}

@@ -1,3 +1,13 @@
+= 2.1.6
+
+* Miscellaneous Updates
+  * Use return-path as from address if set, as per default ActionMailer::Base SMTP delivery (Dustin Tinney)
+  * Always wait full delay between deliveries (cyu)
+
+* Bugs fixed
+  * Non-zero return code returned in init.d script (hennk)
+  * Use updated Timeout error class (hennk)
+
 = 2.1.5
 
 * Bugs fixed
@@ -21,7 +31,7 @@
   * Require ar_mailer in ar_sendmail since the change to remove TableName and use email_class
 
 = 2.1.1
- 
+
  * Force gem rebuild
 
 = 2.1.0
@@ -55,7 +65,7 @@
 = 1.4.3
 
 * Bugs fixed
-  * Replaced mistaken call to log when removing pid file artifact for 
+  * Replaced mistaken call to log when removing pid file artifact for
     non-running daemon
 
 = 1.4.2
@@ -65,11 +75,11 @@
     config file. See files share/linux/ar_sendmail and ar_sendmail.conf
 * Bugs fixed
   * Proper handling for relative and absolute paths for the pid file
-* Removed hoe dependency since we need the explicit gemspec file for github and 
+* Removed hoe dependency since we need the explicit gemspec file for github and
   not deploying to RubyForge its not as useful.
-* Moved old BSD rc.d script to share/bsd folder 
+* Moved old BSD rc.d script to share/bsd folder
 * Updated README with github gem install, docs and init script info
- 
+
 = 1.4.1
 
 * Bugs fixed
