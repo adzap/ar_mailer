@@ -30,19 +30,12 @@ Before installing you will need to make sure the original gem is uninstalled as 
 
   $ sudo gem uninstall ar_mailer
 
-Install the gem from Gemcutter gems server:
-
-First, if you haven't already:
-
-  $ sudo gem install gemcutter
-  $ sudo gem tumble
-
 Then
 
   $ sudo gem install adzap-ar_mailer
 
 For Rails >= 2.1, in your environment.rb:
-  
+
   config.gem "adzap-ar_mailer", :lib => 'action_mailer/ar_mailer', :source => 'http://gemcutter.com'
 
 For Rails 2.0, in an initializer file:
@@ -89,9 +82,9 @@ Or if you need to, you can set each mailer class delivery method individually:
   end
 
 This can be useful when using plugins like ExceptionNotification. Where it
-might be foolish to tie the sending of the email alert to the database when the 
+might be foolish to tie the sending of the email alert to the database when the
 database might be causing the exception being raised. In this instance you could
-override ExceptionNofitier delivery method to be smtp or set the other 
+override ExceptionNofitier delivery method to be smtp or set the other
 mailer classes to use ARMailer explicitly.
 
 Then to run it:
@@ -117,7 +110,7 @@ SMTP server supports it. If you do not want it to automatically enabled then
 set the :tls option to false in your smtp_settings.
 
 If you are on Ruby <= 1.8.6, then the TLS patch included in this plugin will
-be loaded, so you don't need another TLS plugin to add the capability. This 
+be loaded, so you don't need another TLS plugin to add the capability. This
 patch allows you to explicit set if the server supports TLS by setting the
 :tls option to true in your smtp_settings.
 
@@ -130,10 +123,10 @@ around.  ar_mailer supplies it own.
 
 == Run as a service (init.d/rc.d scripts)
 
-For Linux both script and demo config files are in share/linux. 
-See ar_sendmail.conf for setting up your config. Copy the ar_sendmail file 
+For Linux both script and demo config files are in share/linux.
+See ar_sendmail.conf for setting up your config. Copy the ar_sendmail file
 to /etc/init.d/ and make it executable. Then for Debian based distros run
-'sudo update-rc.d ar_sendmail defaults' and it should work. Make sure you have 
+'sudo update-rc.d ar_sendmail defaults' and it should work. Make sure you have
 the config file /etc/ar_sendmail.conf in place before starting.
 
 For FreeBSD or NetBSD script is share/bsd/ar_sendmail. This is old and does not
