@@ -14,11 +14,11 @@ begin
   config = YAML::load(IO.read(config_file)) || {}
   if config.empty? || (config.has_key?('defaults') && config.size == 1)
     puts "No mailers defined. Exiting."
-    exit
+    exit -2
   end
 rescue Errno::ENOENT
   puts "Config file not found at '#{config_file}'!"
-  exit
+  exit -3
 end
 
 default_options = {'pidfile' => './log/ar_sendmail.pid'}.merge(config.delete('defaults') || {})
@@ -57,7 +57,7 @@ end
 
 def command_error(msg)
   puts msg
-  exit
+  exit -1
 end
 
 if ['start', 'stop', 'restart'].include?(command)

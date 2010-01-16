@@ -282,7 +282,7 @@ class ActionMailer::ARSendmail
         File.open(@@pid_file, 'r') {|f| pid = f.read.chomp }
         if system("ps -p #{pid} | grep #{pid}") # returns true if process is running, o.w. false
           $stderr.puts "Warning: The pid file #{@@pid_file} exists and ar_sendmail is running. Shutting down."
-          exit
+          exit -1
         else
           # not running, so remove existing pid file and continue
           self.remove_pid_file
@@ -302,7 +302,7 @@ class ActionMailer::ARSendmail
   rescue Exception => e
     $stderr.puts "Unhandled exception #{e.message}(#{e.class}):"
     $stderr.puts "\t#{e.backtrace.join "\n\t"}"
-    exit 1
+    exit -2
   end
 
   ##
@@ -416,7 +416,7 @@ class ActionMailer::ARSendmail
   def do_exit
     log "caught signal, shutting down"
     self.class.remove_pid_file
-    exit
+    exit 130
   end
 
   ##
