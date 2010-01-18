@@ -38,6 +38,10 @@ For Rails >= 2.1, in your environment.rb:
 
   config.gem "adzap-ar_mailer", :lib => 'action_mailer/ar_mailer'
 
+  # or since version 2.1.7 of this gem you can now just do
+
+  config.gem "adzap-ar_mailer"
+
 For Rails 2.0, in an initializer file:
 
   require 'action_mailer/ar_mailer'
