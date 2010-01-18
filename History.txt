@@ -1,3 +1,11 @@
+= 2.1.7
+
+* Miscellaneous Updates
+  * Added adzap-ar_mailer file to end the need for the config.gem :lib option
+
+* Bugs fixed
+  * Fix from address being set as address header object.
+
 = 2.1.6
 
 * Miscellaneous Updates

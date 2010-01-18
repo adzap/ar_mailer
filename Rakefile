@@ -26,6 +26,7 @@ ar_mailer_gemspec = Gem::Specification.new do |s|
     "generators/ar_mailer/ar_mailer_generator.rb",
     "generators/ar_mailer/templates/migration.rb",
     "generators/ar_mailer/templates/model.rb",
+    "lib/adzap-ar_mailer.rb",
     "lib/action_mailer/ar_mailer.rb",
     "lib/action_mailer/ar_sendmail.rb",
     "lib/smtp_tls.rb",
@@ -44,6 +45,8 @@ ar_mailer_gemspec = Gem::Specification.new do |s|
   s.rubyforge_project = %q{seattlerb}
   s.summary = %q{A two-phase delivery agent for ActionMailer}
   s.test_files = ["test/test_armailer.rb", "test/test_arsendmail.rb"]
+  s.add_development_dependency "minitest", ">= 1.5.0"
+  s.add_development_dependency "mocha", ">= 0.9.8"
 end
 
 Rake::GemPackageTask.new(ar_mailer_gemspec) do |pkg|
