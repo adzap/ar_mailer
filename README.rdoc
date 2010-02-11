@@ -169,6 +169,10 @@ The initializer in config/initializers/action_mailer.rb:
 At the moment if you are using a database driver that doesn't come with Rails, the gem
 will need to be installed on the target system.
 
+Now to run ar_sendmail with minimal environment we do:
+
+  ar_sendmail -e production -c /path/to/app --minimal
+
 If you have any troubles or find any bad assumptions in the minimal set up let me know.
 
 
