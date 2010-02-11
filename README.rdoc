@@ -148,11 +148,9 @@ in config/email.yml
     port: 25
 
 You can still have ActionMailer settings in each environment file but just be sure
-they don't override these SMTP settings. The other settings should not be needed
-once the email has been generated and stored by ar_mailer in the email table.
-
-The minimal set up will also force the use of a separate mailer log file at
-RAILS_ROOT/log/mailer.log.
+they don't override these SMTP settings. The other settings aren't needed when
+running ar_sendmail since they only apply to the generation of an email which has
+already happened inside the running application.
 
 To avoid duplication of these settings you need to have an initializer which will
 will read the same config file and load these settings. This is in case you switch

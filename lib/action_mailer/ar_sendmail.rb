@@ -283,8 +283,7 @@ class ActionMailer::ARSendmail
   end
 
   # Load a minimal environment to save memory by not loading the entire Rails app.
-  # Requires a vendored Rails and mailer config at config/email.yml. It will also
-  # use its own separate logger file at log/mailer.log
+  # Requires a vendored Rails and mailer config at config/email.yml.
   #
   def self.load_minimal_environment(base_path)
     Dir.chdir(base_path) do
@@ -297,15 +296,14 @@ class ActionMailer::ARSendmail
       require 'app/models/email'
 
       env = ENV['RAILS_ENV']
-      logger_level = ActiveSupport::BufferedLogger.const_get((env == 'production' ? 'info' : 'debug').upcase)
 
-      ActiveRecord::Base.logger =  ActiveSupport::BufferedLogger.new(File.join('log', "#{env}.log"))
-      ActiveRecord::Base.logger.level = logger_level
+      logger = ActiveSupport::BufferedLogger.new(File.join('log', "#{env}.log"))
+      logger.level = ActiveSupport::BufferedLogger.const_get((env == 'production' ? 'info' : 'debug').upcase)
+      ActiveRecord::Base.logger = ActionMailer::Base.logger = logger
+
       db_config = read_config('config/database.yml')
       ActiveRecord::Base.establish_connection db_config[env]
 
-      ActionMailer::Base.logger = ActiveSupport::BufferedLogger.new(File.join('log', "mailer.log"))
-      ActionMailer::Base.logger.level = logger_level
       mailer_config = read_config('config/email.yml')
       ActionMailer::Base.smtp_settings = mailer_config[env].symbolize_keys
     end
