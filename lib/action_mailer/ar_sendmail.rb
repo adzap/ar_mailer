@@ -39,10 +39,13 @@ module ActionMailer; end
 
 class ActionMailer::ARSendmail
 
+  class RailsEnvironmentFailed < StandardError; end
+  class MinimalEnvironmentFailed < StandardError; end
+
   ##
   # The version of ActionMailer::ARSendmail you are running.
 
-  VERSION = '2.1.7'
+  VERSION = '2.1.7.999'
 
   ##
   # Maximum number of times authentication will be consecutively retried
@@ -148,6 +151,7 @@ class ActionMailer::ARSendmail
     options[:Once] = false
     options[:RailsEnv] = ENV['RAILS_ENV']
     options[:Pidfile] = options[:Chdir] + '/log/ar_sendmail.pid'
+    options[:Minimal] = false
 
     opts = OptionParser.new do |opts|
       opts.banner = "Usage: #{name} [options]"
@@ -192,6 +196,12 @@ class ActionMailer::ARSendmail
               "Run as a daemon process",
               "Default: #{options[:Daemon]}") do |daemon|
         options[:Daemon] = true
+      end
+
+      opts.on(      "--minimal",
+              "Load a minimal environment with settings from config/email.yml",
+              "Default: #{options[:Minimal]}") do |minimal|
+        options[:Minimal] = true
       end
 
       opts.on("-p", "--pidfile PIDFILE",
@@ -247,19 +257,73 @@ class ActionMailer::ARSendmail
 
     ENV['RAILS_ENV'] = options[:RailsEnv]
 
-    Dir.chdir options[:Chdir] do
-      begin
-        require 'config/environment'
-        require 'action_mailer/ar_mailer'
-      rescue LoadError
-        usage opts, <<-EOF
+    begin
+      options[:Minimal] ? load_minimal_environment(options[:Chdir]) : load_rails_environment(options[:Chdir])
+    rescue RailsEnvironmentFailed
+      usage opts, <<-EOF
 #{name} must be run from a Rails application's root to deliver email.
 #{Dir.pwd} does not appear to be a Rails application root.
-        EOF
-      end
+      EOF
+    rescue MinimalEnvironmentFailed => e
+      usage opts, "Minimal environment loading has failed with error '#{e.message}'. Check minimal environment instructions or use the normal Rails environment loading."
     end
 
     return options
+  end
+
+  # Load full Rails environment
+  #
+  def self.load_rails_environment(base_path)
+    Dir.chdir(base_path) do
+      require 'config/environment'
+      require 'action_mailer/ar_mailer'
+    end
+  rescue LoadError
+    raise RailsEnvironmentFailed
+  end
+
+  # Load a minimal environment to save memory by not loading the entire Rails app.
+  # Requires a vendored Rails and mailer config at config/email.yml. It will also
+  # use its own separate logger file at log/mailer.log
+  #
+  def self.load_minimal_environment(base_path)
+    Dir.chdir(base_path) do
+      Dir.glob('vendor/rails/*/lib').each { |dir| $:.unshift File.expand_path(dir) }
+      require 'yaml'
+      require 'erb'
+      require 'active_record'
+      require 'action_mailer'
+      require 'action_mailer/ar_mailer'
+      require 'app/models/email'
+
+      env = ENV['RAILS_ENV']
+      logger_level = ActiveSupport::BufferedLogger.const_get((env == 'production' ? 'info' : 'debug').upcase)
+
+      ActiveRecord::Base.logger =  ActiveSupport::BufferedLogger.new(File.join('log', "#{env}.log"))
+      ActiveRecord::Base.logger.level = logger_level
+      db_config = read_config('config/database.yml')
+      ActiveRecord::Base.establish_connection db_config[env]
+
+      ActionMailer::Base.logger = ActiveSupport::BufferedLogger.new(File.join('log', "mailer.log"))
+      ActionMailer::Base.logger.level = logger_level
+      mailer_config = read_config('config/email.yml')
+      ActionMailer::Base.smtp_settings = mailer_config[env].symbolize_keys
+    end
+  rescue => e
+    raise MinimalEnvironmentFailed, e.message
+  end
+      def default_log_path
+        File.join(root_path, 'log', "#{environment}.log")
+      end
+
+      def default_log_level
+        environment == 'production' ? :info : :debug
+      end
+
+  # Open yaml config file and parse with ERB
+  #
+  def self.read_config(file)
+    YAML::load(ERB.new(IO.read(file)).result)
   end
 
   ##
