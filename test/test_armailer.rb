@@ -9,6 +9,7 @@ class Mailer < ActionMailer::Base
     def @mail.from() ['nobody@example.com'] end
     def @mail.[](key) {'return-path' => $return_path, 'from' => 'nobody@example.com'}[key] end
     def @mail.destinations() %w[user1@example.com user2@example.com] end
+    def @mail.ready_to_send() end
   end
 
 end
@@ -30,7 +31,7 @@ class TestARMailer < Test::Unit::TestCase
 
     assert_equal 2, Newsletter.records.length
   end
-  
+
   def test_perform_delivery_activerecord_when_return_path_is_present
     $return_path = stub(:spec => 'return-path@example.com')
     Mailer.deliver_mail
