@@ -45,7 +45,7 @@ class ActionMailer::ARSendmail
   ##
   # The version of ActionMailer::ARSendmail you are running.
 
-  VERSION = '2.1.9'
+  VERSION = '2.1.10'
 
   ##
   # Maximum number of times authentication will be consecutively retried
@@ -288,6 +288,7 @@ class ActionMailer::ARSendmail
   def self.load_minimal_environment(base_path)
     Dir.chdir(base_path) do
       Dir.glob('vendor/rails/*/lib').each { |dir| $:.unshift File.expand_path(dir) }
+      require 'thread'
       require 'yaml'
       require 'erb'
       require 'active_record'
