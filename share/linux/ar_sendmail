@@ -29,7 +29,12 @@ def start(app, options)
   switches = ""
   options.each {|k, v| switches << " --#{k} #{v}"}
   STDOUT.write "Starting mailer for #{app} in #{options['environment']} mode ... "
-  status = system("ar_sendmail -d #{switches}") ? "started" : "failed"
+  status = nil
+  Dir.chdir(options.delete('chdir')) do
+    command = 'ar_sendmail'
+    command = 'bundle exec ' + command if File.exists?('Gemfile')
+    status = system("#{command} -d #{switches}") ? "started" : "failed"
+  end
   puts status
 end
 

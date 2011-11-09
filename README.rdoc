@@ -118,6 +118,64 @@ be loaded, so you don't need another TLS plugin to add the capability. This
 patch allows you to explicit set if the server supports TLS by setting the
 :tls option to true in your smtp_settings.
 
+
+=== EXPERIMENTAL: Minimal environment loading
+
+The biggest downside to using ar_mailer is that it loads the entire Rails app
+into memory. For larger apps this can be just a whole lot of wasted memory
+given all you need is to access the email table and mailer settings. We can
+get around this using a few conventions and save around 50% or more of the
+memory used when loading the full app.
+
+Loading the database is not much of a problem since the config sits in its own
+yaml which is easy to load in isolation from the app. The mailer settings are
+trickier since they are usually in the environment file which depends on loading
+the Railties system and therefore the whole app.
+
+To workaround for this we need to put all the SMTP settings in a yaml config
+file like the database settings. Like so
+
+in config/email.yml
+
+  development:
+    domain: example.com
+    address: smtp.example.com
+    port: 25
+
+  production:
+    domain: example.com
+    address: smtp.example.com
+    port: 25
+
+You can still have ActionMailer settings in each environment file but just be sure
+they don't override these SMTP settings. The other settings aren't needed when
+running ar_sendmail since they only apply to the generation of an email which has
+already happened inside the running application.
+
+To avoid duplication of these settings you need to have an initializer which will
+will read the same config file and load these settings. This is in case you switch
+back the normal environment loading. Keeping the email settings here is good idea,
+since just the like the database, they are external connection settings being stored
+in the config folder.
+
+The initializer in config/initializers/action_mailer.rb:
+
+  config_file = "#{Rails.root}/config/email.yml"
+  mailer_options = YAML::load(ERB.new(IO.read(config_file)).result)
+  if mailer_options[Rails.env]
+    ActionMailer::Base.smtp_settings = mailer_options[Rails.env].symbolize_keys
+  end
+
+At the moment if you are using a database driver that doesn't come with Rails, the gem
+will need to be installed on the target system.
+
+Now to run ar_sendmail with minimal environment we do:
+
+  ar_sendmail -e production -c /path/to/app --minimal
+
+If you have any troubles or find any bad assumptions in the minimal set up let me know.
+
+
 === Help
 
 See ar_sendmail -h for options to ar_sendmail.
